@@ -25,6 +25,12 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
+          <Link to="/dashboard">
+            <Button variant="outline" className="border-unistay-blue text-unistay-blue hover:bg-unistay-blue hover:text-white">
+              <User className="mr-2 h-4 w-4" />
+              Dashboard
+            </Button>
+          </Link>
           <Link to="/login">
             <Button variant="outline" className="border-unistay-blue text-unistay-blue hover:bg-unistay-blue hover:text-white">
               Log in
@@ -75,6 +81,13 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
+            </Link>
+            <Link 
+              to="/dashboard" 
+              className="px-4 py-2 hover:bg-slate-100 rounded-md"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Dashboard
             </Link>
             <div className="flex flex-col gap-2 pt-2 border-t">
               <Link to="/login" onClick={() => setIsMenuOpen(false)}>
