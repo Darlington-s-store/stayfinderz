@@ -1,10 +1,10 @@
-
 import Layout from "@/components/Layout";
 import SearchBar from "@/components/SearchBar";
 import PropertyCard from "@/components/PropertyCard";
 import { properties } from "@/data/properties";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import PropertyContactButtons from "@/components/PropertyContactButtons";
 import { 
   MapPin, 
   Building,
@@ -46,8 +46,14 @@ const Index = () => {
               <span>Need help finding accommodation? Call us: <strong>+233 50 123 4567</strong></span>
             </div>
             <div className="flex items-center gap-4">
-              <Clock className="hidden md:block" size={18} />
-              <span>Mon-Fri: 8am-6pm | Sat: 10am-3pm</span>
+              <PropertyContactButtons 
+                phone="+233 50 123 4567"
+                name="UniStay Support"
+                propertyTitle="Student Accommodation"
+                variant="ghost"
+                size="sm"
+                className="bg-white/10 rounded-md px-2 py-1"
+              />
             </div>
           </div>
         </div>
@@ -244,7 +250,7 @@ const Index = () => {
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Join thousands of students who have found their ideal living space through UniStay.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link to="/signup">
               <Button size="lg" className="bg-unistay-blue hover:bg-unistay-blue/90">
                 Sign Up Now
@@ -255,6 +261,15 @@ const Index = () => {
                 Browse Listings
               </Button>
             </Link>
+          </div>
+          <div className="mt-6 inline-block">
+            <PropertyContactButtons
+              phone="+233 50 123 4567"
+              name="UniStay Support"
+              propertyTitle="Student Accommodation"
+              size="lg"
+              className="justify-center"
+            />
           </div>
         </div>
       </section>
