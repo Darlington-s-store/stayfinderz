@@ -259,6 +259,8 @@ const Listings = () => {
                     imageUrl={property.imageUrl}
                     roomType={property.roomType}
                     amenities={property.amenities}
+                    landlordName={property.landlord.name}
+                    landlordPhone={property.landlord.phone}
                   />
                 ))}
               </div>

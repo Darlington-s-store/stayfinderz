@@ -1,9 +1,11 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import SaveButton from "./SaveButton";
+import PropertyContactButtons from "./PropertyContactButtons";
 
 interface PropertyCardProps {
   id: string;
@@ -14,6 +16,8 @@ interface PropertyCardProps {
   imageUrl: string;
   roomType: string;
   amenities: string[];
+  landlordName?: string;
+  landlordPhone?: string;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -25,10 +29,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   imageUrl,
   roomType,
   amenities,
+  landlordName,
+  landlordPhone,
 }) => {
+  const [showContact, setShowContact] = useState(false);
+  
   return (
-    <Link to={`/property/${id}`}>
-      <Card className="overflow-hidden border property-card-shadow">
+    <Card className="overflow-hidden border property-card-shadow">
+      <Link to={`/property/${id}`}>
         <div className="aspect-video overflow-hidden relative">
           <img 
             src={imageUrl} 
@@ -40,7 +48,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             className="absolute top-2 right-2"
           />
         </div>
-        <CardContent className="p-4">
+      </Link>
+      <CardContent className="p-4">
+        <Link to={`/property/${id}`}>
           <div className="flex items-start justify-between">
             <div>
               <h3 className="font-semibold text-lg line-clamp-1">{title}</h3>
@@ -55,25 +65,48 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               <span className="text-sm font-normal text-gray-500">/semester</span>
             </p>
           </div>
-          
-          <div className="mt-4">
+        </Link>
+        
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
             <Badge className="bg-unistay-blue">{roomType}</Badge>
-            <div className="flex flex-wrap gap-1 mt-2">
-              {amenities.slice(0, 3).map((amenity) => (
-                <Badge key={amenity} variant="outline" className="text-xs">
-                  {amenity}
-                </Badge>
-              ))}
-              {amenities.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{amenities.length - 3} more
-                </Badge>
-              )}
-            </div>
+            {landlordName && landlordPhone && (
+              <button 
+                onClick={() => setShowContact(!showContact)}
+                className="text-xs text-unistay-blue hover:underline"
+              >
+                {showContact ? "Hide contact" : "Show contact"}
+              </button>
+            )}
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+          
+          {showContact && landlordName && landlordPhone && (
+            <div className="mb-3">
+              <PropertyContactButtons
+                phone={landlordPhone}
+                name={landlordName}
+                propertyTitle={title}
+                size="sm"
+                className="w-full mb-2"
+              />
+            </div>
+          )}
+          
+          <div className="flex flex-wrap gap-1 mt-2">
+            {amenities.slice(0, 3).map((amenity) => (
+              <Badge key={amenity} variant="outline" className="text-xs">
+                {amenity}
+              </Badge>
+            ))}
+            {amenities.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{amenities.length - 3} more
+              </Badge>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

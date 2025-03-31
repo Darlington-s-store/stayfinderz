@@ -7,6 +7,7 @@ import { Property } from "@/data/properties";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PropertyContactButtons from "@/components/PropertyContactButtons";
 import {
   MapPin,
   Star,
@@ -113,6 +114,16 @@ const PropertyDetails = () => {
               <span className="text-gray-500">({property.reviews} reviews)</span>
             </div>
           </div>
+        </div>
+
+        {/* Quick contact buttons */}
+        <div className="mb-8">
+          <PropertyContactButtons
+            phone={property.landlord.phone}
+            name={property.landlord.name}
+            propertyTitle={property.title}
+            className="flex justify-end"
+          />
         </div>
 
         {/* Property Details Tabs */}
@@ -227,12 +238,18 @@ const PropertyDetails = () => {
               </div>
             </div>
             <div className="flex-grow">
-              <Button className="bg-unistay-blue hover:bg-unistay-blue/90 w-full mb-3">
-                Book Now
-              </Button>
-              <Button variant="outline" className="w-full">
-                Contact Landlord
-              </Button>
+              <Link to={`/booking/${property.id}`}>
+                <Button className="bg-unistay-blue hover:bg-unistay-blue/90 w-full mb-3">
+                  Book Now
+                </Button>
+              </Link>
+              <PropertyContactButtons
+                phone={property.landlord.phone}
+                name={property.landlord.name}
+                propertyTitle={property.title}
+                variant="outline"
+                className="w-full"
+              />
             </div>
           </div>
         </div>
