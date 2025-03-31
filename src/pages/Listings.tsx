@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import PropertyCard from "@/components/PropertyCard";
+import PropertyPagination from "@/components/PropertyPagination";
 import { properties as allProperties } from "@/data/properties";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,8 @@ const Listings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filteredProperties, setFilteredProperties] = useState(allProperties);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Show 6 properties per page
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState(searchParams.get("location") || "");
@@ -24,6 +27,11 @@ const Listings = () => {
   const [minPrice, setMinPrice] = useState(1000);
   const [maxPrice, setMaxPrice] = useState(6000);
   const [amenities, setAmenities] = useState<string[]>([]);
+  
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, university, roomType, minPrice, maxPrice, amenities]);
   
   const toggleAmenity = (amenity: string) => {
     if (amenities.includes(amenity)) {
@@ -105,6 +113,16 @@ const Listings = () => {
     "Shared Bathroom", "Private Kitchen", "Shared Kitchen", "Air Conditioning",
     "Study Desk", "Study Lounge", "Laundry Facility"
   ];
+  
+  // Calculate pagination indexes
+  const indexOfLastProperty = currentPage * itemsPerPage;
+  const indexOfFirstProperty = indexOfLastProperty - itemsPerPage;
+  const currentProperties = filteredProperties.slice(indexOfFirstProperty, indexOfLastProperty);
+  
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   
   return (
     <Layout>
@@ -228,21 +246,30 @@ const Listings = () => {
               <Button onClick={clearFilters}>Clear All Filters</Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  id={property.id}
-                  title={property.title}
-                  location={property.location}
-                  university={property.university}
-                  price={property.price}
-                  imageUrl={property.imageUrl}
-                  roomType={property.roomType}
-                  amenities={property.amenities}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentProperties.map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    id={property.id}
+                    title={property.title}
+                    location={property.location}
+                    university={property.university}
+                    price={property.price}
+                    imageUrl={property.imageUrl}
+                    roomType={property.roomType}
+                    amenities={property.amenities}
+                  />
+                ))}
+              </div>
+              
+              <PropertyPagination 
+                totalItems={filteredProperties.length} 
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </>
           )}
         </div>
       </div>
