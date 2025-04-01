@@ -1,33 +1,46 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { addToFavorites, removeFromFavorites, isPropertyInFavorites } from "@/services/propertyService";
 
 interface SaveButtonProps {
   propertyId: string;
-  initialSaved?: boolean;
   className?: string;
 }
 
 const SaveButton: React.FC<SaveButtonProps> = ({ 
-  propertyId, 
-  initialSaved = false,
+  propertyId,
   className = ""
 }) => {
-  const [isSaved, setIsSaved] = useState(initialSaved);
+  const [isSaved, setIsSaved] = useState(false);
   const { toast } = useToast();
 
-  const handleToggleSave = () => {
-    // In a real app, this would call an API to save/unsave the property
-    setIsSaved(!isSaved);
+  useEffect(() => {
+    // Check if property is in favorites when component mounts
+    setIsSaved(isPropertyInFavorites(propertyId));
+  }, [propertyId]);
+
+  const handleToggleSave = (e: React.MouseEvent) => {
+    // Stop event propagation to prevent navigation if inside a link
+    e.stopPropagation();
     
-    toast({
-      title: isSaved ? "Property removed" : "Property saved",
-      description: isSaved 
-        ? "Property has been removed from your saved list" 
-        : "Property has been added to your saved list",
-    });
+    if (isSaved) {
+      removeFromFavorites(propertyId);
+      setIsSaved(false);
+      toast({
+        title: "Property removed",
+        description: "Property has been removed from your saved list",
+      });
+    } else {
+      addToFavorites(propertyId);
+      setIsSaved(true);
+      toast({
+        title: "Property saved",
+        description: "Property has been added to your saved list",
+      });
+    }
   };
 
   return (

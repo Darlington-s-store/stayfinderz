@@ -46,11 +46,17 @@ export const getProperties = ({
   location,
   roomType,
   availableOnly = false,
+  minPrice,
+  maxPrice,
+  amenities = [],
 }: {
   university?: string;
   location?: string;
   roomType?: string;
   availableOnly?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  amenities?: string[];
 } = {}) => {
   let filteredProperties = [...properties];
 
@@ -75,6 +81,20 @@ export const getProperties = ({
   if (availableOnly) {
     filteredProperties = filteredProperties.filter(p => 
       p.roomAvailability && p.roomAvailability.available > 0
+    );
+  }
+
+  if (minPrice !== undefined) {
+    filteredProperties = filteredProperties.filter(p => p.price >= minPrice);
+  }
+
+  if (maxPrice !== undefined) {
+    filteredProperties = filteredProperties.filter(p => p.price <= maxPrice);
+  }
+
+  if (amenities && amenities.length > 0) {
+    filteredProperties = filteredProperties.filter(property => 
+      amenities.every(amenity => property.amenities.includes(amenity))
     );
   }
 
@@ -103,6 +123,28 @@ export const getSimilarProperties = (
     .slice(0, limit);
 };
 
+// Get all available amenities
+export const getAllAmenities = (): string[] => {
+  const amenitiesSet = new Set<string>();
+  
+  properties.forEach(property => {
+    property.amenities.forEach(amenity => {
+      amenitiesSet.add(amenity);
+    });
+  });
+  
+  return Array.from(amenitiesSet).sort();
+};
+
+// Get price range
+export const getPriceRange = (): { min: number; max: number } => {
+  const prices = properties.map(p => p.price);
+  return {
+    min: Math.min(...prices),
+    max: Math.max(...prices)
+  };
+};
+
 // Simulate booking a room
 export const bookRoom = async (propertyId: string, userData: any) => {
   // In a real app, this would make an API call
@@ -115,5 +157,51 @@ export const bookRoom = async (propertyId: string, userData: any) => {
         userData
       });
     }, 800);
+  });
+};
+
+// User favorites system
+const FAVORITES_KEY = 'unistay_favorites';
+
+export const getUserFavorites = (): string[] => {
+  const favorites = localStorage.getItem(FAVORITES_KEY);
+  return favorites ? JSON.parse(favorites) : [];
+};
+
+export const addToFavorites = (propertyId: string): string[] => {
+  const favorites = getUserFavorites();
+  if (!favorites.includes(propertyId)) {
+    const newFavorites = [...favorites, propertyId];
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+    return newFavorites;
+  }
+  return favorites;
+};
+
+export const removeFromFavorites = (propertyId: string): string[] => {
+  const favorites = getUserFavorites();
+  const newFavorites = favorites.filter(id => id !== propertyId);
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+  return newFavorites;
+};
+
+export const isPropertyInFavorites = (propertyId: string): boolean => {
+  const favorites = getUserFavorites();
+  return favorites.includes(propertyId);
+};
+
+export const getFavoriteProperties = (): Property[] => {
+  const favoriteIds = getUserFavorites();
+  return properties.filter(property => favoriteIds.includes(property.id));
+};
+
+// Compare properties
+export const compareProperties = (propertyIds: string[]): Property[] => {
+  return propertyIds.map(id => {
+    const property = getPropertyById(id);
+    if (!property) {
+      throw new Error(`Property with ID ${id} not found`);
+    }
+    return property;
   });
 };
