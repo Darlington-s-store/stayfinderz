@@ -1,3 +1,4 @@
+
 import Layout from "@/components/Layout";
 import SearchBar from "@/components/SearchBar";
 import PropertyCard from "@/components/PropertyCard";
@@ -270,6 +271,30 @@ const Index = () => {
               size="lg"
               className="justify-center"
             />
+          </div>
+        </div>
+      </section>
+      
+      {/* Contact Support Section - Added at the Bottom */}
+      <section className="py-12 bg-slate-100">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Need assistance with your accommodation search?</h2>
+              <p className="text-gray-600">Our support team is available to help you find the perfect hostel near your university.</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <PropertyContactButtons 
+                phone="+233 50 123 4567"
+                name="UniStay Support"
+                propertyTitle="Student Accommodation"
+                size="default"
+              />
+              <Link to="/booking">
+                <Button className="w-full">Book Hostel</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

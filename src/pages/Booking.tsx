@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
@@ -14,11 +14,11 @@ import { properties } from "@/data/properties";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { CalendarIcon, ArrowLeft } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Booking = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const property = properties.find(p => p.id === id);
   
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -28,23 +28,28 @@ const Booking = () => {
   const [duration, setDuration] = useState("1");
   const [message, setMessage] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [selectedPropertyId, setSelectedPropertyId] = useState(id || "");
   
-  if (!property) {
-    return (
-      <Layout>
-        <div className="container py-16 text-center">
-          <h1 className="text-2xl font-bold mb-4">Property Not Found</h1>
-          <p className="mb-6">The property you're trying to book doesn't exist or has been removed.</p>
-          <Link to="/listings">
-            <Button>Browse All Listings</Button>
-          </Link>
-        </div>
-      </Layout>
-    );
-  }
+  const selectedProperty = properties.find(p => p.id === selectedPropertyId);
+  
+  // If no property is selected and we have an id from params, set it
+  useEffect(() => {
+    if (id && !selectedPropertyId) {
+      setSelectedPropertyId(id);
+    }
+  }, [id]);
+  
+  const handlePropertyChange = (propertyId: string) => {
+    setSelectedPropertyId(propertyId);
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedPropertyId) {
+      toast.error("Please select a hostel");
+      return;
+    }
     
     if (!moveInDate) {
       toast.error("Please select a move-in date");
@@ -61,7 +66,7 @@ const Booking = () => {
     
     // Redirect to property details after successful submission
     setTimeout(() => {
-      navigate(`/property/${id}`);
+      navigate(`/property/${selectedPropertyId}`);
     }, 2000);
   };
   
@@ -69,8 +74,8 @@ const Booking = () => {
     <Layout>
       <div className="container py-8">
         <div className="mb-6">
-          <Link to={`/property/${id}`} className="text-unistay-blue hover:underline inline-flex items-center">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to property details
+          <Link to={selectedPropertyId ? `/property/${selectedPropertyId}` : "/listings"} className="text-unistay-blue hover:underline inline-flex items-center">
+            <ArrowLeft className="mr-2 h-4 w-4" /> {selectedPropertyId ? "Back to property details" : "Back to listings"}
           </Link>
         </div>
         
@@ -81,32 +86,40 @@ const Booking = () => {
               <h3 className="text-xl font-semibold">Booking Summary</h3>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="aspect-video overflow-hidden rounded-md">
-                <img 
-                  src={property.imageUrl} 
-                  alt={property.title} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              <h4 className="font-semibold text-lg">{property.title}</h4>
-              <div className="text-sm text-gray-600">{property.location}</div>
-              <div className="text-sm text-gray-600">Near {property.university}</div>
-              
-              <div className="border-t pt-4 mt-4">
-                <div className="flex justify-between mb-2">
-                  <span>Price per semester</span>
-                  <span className="font-semibold">¢{property.price.toLocaleString()}</span>
+              {selectedProperty ? (
+                <>
+                  <div className="aspect-video overflow-hidden rounded-md">
+                    <img 
+                      src={selectedProperty.imageUrl} 
+                      alt={selectedProperty.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  <h4 className="font-semibold text-lg">{selectedProperty.title}</h4>
+                  <div className="text-sm text-gray-600">{selectedProperty.location}</div>
+                  <div className="text-sm text-gray-600">Near {selectedProperty.university}</div>
+                  
+                  <div className="border-t pt-4 mt-4">
+                    <div className="flex justify-between mb-2">
+                      <span>Price per semester</span>
+                      <span className="font-semibold">¢{selectedProperty.price.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between mb-2">
+                      <span>Room type</span>
+                      <span>{selectedProperty.roomType}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Managed by</span>
+                      <span>{selectedProperty.landlord.name}</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-10 text-gray-500">
+                  <p>Please select a hostel to view details</p>
                 </div>
-                <div className="flex justify-between mb-2">
-                  <span>Room type</span>
-                  <span>{property.roomType}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Managed by</span>
-                  <span>{property.landlord.name}</span>
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
           
@@ -118,6 +131,22 @@ const Booking = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="property">Select Hostel</Label>
+                  <Select value={selectedPropertyId} onValueChange={handlePropertyChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose a hostel" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {properties.map((property) => (
+                        <SelectItem key={property.id} value={property.id}>
+                          {property.title} - {property.university}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
@@ -228,7 +257,11 @@ const Booking = () => {
                 </div>
                 
                 <div className="pt-4 border-t">
-                  <Button type="submit" className="w-full bg-unistay-blue hover:bg-unistay-blue/90">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-unistay-blue hover:bg-unistay-blue/90"
+                    disabled={!selectedPropertyId}
+                  >
                     Submit Booking Request
                   </Button>
                   <p className="text-sm text-gray-500 mt-2 text-center">

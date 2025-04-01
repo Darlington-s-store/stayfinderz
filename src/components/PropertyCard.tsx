@@ -104,6 +104,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </Badge>
             )}
           </div>
+          
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Link to={`/property/${id}`} className="w-full">
+              <Button variant="outline" size="sm" className="w-full">View Details</Button>
+            </Link>
+            <Link to={`/booking/${id}`} className="w-full">
+              <Button size="sm" className="w-full bg-unistay-blue hover:bg-unistay-blue/90">Book Now</Button>
+            </Link>
+          </div>
         </div>
       </CardContent>
     </Card>
