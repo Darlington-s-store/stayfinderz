@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import SaveButton from "./SaveButton";
 import PropertyContactButtons from "./PropertyContactButtons";
+import { Button } from "@/components/ui/button"; 
 
 interface PropertyCardProps {
   id: string;
