@@ -34,8 +34,8 @@ const formSchema = z.object({
   propertyId: z.string().min(1, "Please select a hostel"),
   roomType: z.string().min(1, "Please select a room type"),
   moveInDate: z.string().min(1, "Please select a move-in date"),
-  termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms and conditions" }),
+  termsAccepted: z.boolean().refine(val => val === true, {
+    message: "You must accept the terms and conditions",
   }),
 });
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { properties } from "@/data/properties";
-import { Property } from "@/data/properties";
+import { Property } from "@/services/propertyService"; // Fixed import path for Property type
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
