@@ -3,10 +3,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin } from "lucide-react";
+import { MapPin, Bed, Check, X } from "lucide-react";
 import SaveButton from "./SaveButton";
 import PropertyContactButtons from "./PropertyContactButtons";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface PropertyCardProps {
   id: string;
@@ -19,6 +20,11 @@ interface PropertyCardProps {
   amenities: string[];
   landlordName?: string;
   landlordPhone?: string;
+  roomAvailability?: {
+    total: number;
+    available: number;
+    occupied: number;
+  };
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -32,8 +38,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   amenities,
   landlordName,
   landlordPhone,
+  roomAvailability,
 }) => {
   const [showContact, setShowContact] = useState(false);
+  
+  // Calculate if rooms are available
+  const hasAvailableRooms = roomAvailability && roomAvailability.available > 0;
   
   return (
     <Card className="overflow-hidden border property-card-shadow">
@@ -48,6 +58,18 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             propertyId={id}
             className="absolute top-2 right-2"
           />
+          
+          {roomAvailability && (
+            <div className="absolute bottom-2 right-2">
+              <Badge className={`${hasAvailableRooms ? 'bg-green-500' : 'bg-red-500'}`}>
+                {hasAvailableRooms ? (
+                  <span className="flex items-center"><Check size={14} className="mr-1" /> Rooms Available</span>
+                ) : (
+                  <span className="flex items-center"><X size={14} className="mr-1" /> Fully Occupied</span>
+                )}
+              </Badge>
+            </div>
+          )}
         </div>
       </Link>
       <CardContent className="p-4">
@@ -67,6 +89,28 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
           </div>
         </Link>
+        
+        {roomAvailability && (
+          <div className="mt-3 mb-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600 flex items-center">
+                <Bed className="h-4 w-4 mr-1" /> Room status:
+              </span>
+              <span className="font-medium">
+                {roomAvailability.available} / {roomAvailability.total} available
+              </span>
+            </div>
+            
+            {!hasAvailableRooms && (
+              <Alert variant="destructive" className="mt-2 py-2 text-xs">
+                <AlertTitle className="text-sm">No rooms available</AlertTitle>
+                <AlertDescription>
+                  This property is currently fully occupied. Check other options below.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        )}
         
         <div className="mt-4">
           <div className="flex justify-between items-center mb-2">
@@ -111,7 +155,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               <Button variant="outline" size="sm" className="w-full">View Details</Button>
             </Link>
             <Link to={`/booking/${id}`} className="w-full">
-              <Button size="sm" className="w-full bg-unistay-blue hover:bg-unistay-blue/90">Book Now</Button>
+              <Button size="sm" className="w-full bg-unistay-blue hover:bg-unistay-blue/90" disabled={!hasAvailableRooms}>
+                {hasAvailableRooms ? 'Book Now' : 'No Rooms'}
+              </Button>
             </Link>
           </div>
         </div>

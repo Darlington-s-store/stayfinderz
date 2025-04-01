@@ -20,23 +20,43 @@ import {
   Mail,
   Shield,
   ExternalLink,
+  Bed,
+  AlertTriangle,
 } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     // Simulate data fetching delay for a more realistic experience
     const timer = setTimeout(() => {
       const foundProperty = properties.find((p) => p.id === id);
       setProperty(foundProperty || null);
+      
+      // Find similar properties with available rooms
+      if (foundProperty) {
+        const similar = properties
+          .filter(p => 
+            p.id !== id && 
+            p.university === foundProperty.university &&
+            p.roomAvailability?.available > 0
+          )
+          .slice(0, 3);
+        setSimilarProperties(similar);
+      }
+      
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [id]);
+
+  // Check if property has available rooms
+  const hasAvailableRooms = property?.roomAvailability && property.roomAvailability.available > 0;
 
   if (loading) {
     return (
@@ -88,6 +108,29 @@ const PropertyDetails = () => {
           />
         </div>
 
+        {/* Room Availability Alert */}
+        {property.roomAvailability && (
+          <div className="mb-8">
+            {!hasAvailableRooms ? (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                <AlertTitle>No rooms available</AlertTitle>
+                <AlertDescription>
+                  This property is currently fully occupied. Please check our similar properties below.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert className="bg-[#F2FCE2] border-green-300 mb-4">
+                <Check className="h-4 w-4 mr-2 text-green-600" />
+                <AlertTitle className="text-green-800">Rooms Available</AlertTitle>
+                <AlertDescription className="text-green-700">
+                  {property.roomAvailability.available} out of {property.roomAvailability.total} rooms available for booking.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        )}
+
         {/* Property Header */}
         <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
           <div>
@@ -96,10 +139,18 @@ const PropertyDetails = () => {
               <MapPin size={18} className="mr-1" />
               <span>{property.location}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge className="bg-unistay-blue">{property.roomType}</Badge>
               <Badge variant="outline">Near {property.university}</Badge>
               <Badge variant="outline">{property.distanceFromUniversity} from campus</Badge>
+              {property.roomAvailability && (
+                <Badge variant={hasAvailableRooms ? "outline" : "destructive"} className="flex items-center">
+                  <Bed size={14} className="mr-1" /> 
+                  {hasAvailableRooms 
+                    ? `${property.roomAvailability.available}/${property.roomAvailability.total} Available` 
+                    : "No Rooms Available"}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -132,6 +183,7 @@ const PropertyDetails = () => {
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="features">Features & Amenities</TabsTrigger>
             <TabsTrigger value="location">Location</TabsTrigger>
+            <TabsTrigger value="rooms">Room Availability</TabsTrigger>
           </TabsList>
           
           <TabsContent value="details" className="space-y-6">
@@ -210,6 +262,63 @@ const PropertyDetails = () => {
               </p>
             </div>
           </TabsContent>
+          
+          {/* New Rooms Availability Tab */}
+          <TabsContent value="rooms">
+            <h3 className="text-xl font-semibold mb-4">Room Availability</h3>
+            
+            {property.roomAvailability ? (
+              <div className="space-y-6">
+                <div className="bg-slate-50 p-6 rounded-lg">
+                  <h4 className="text-lg font-medium mb-3">Current Status</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="bg-white shadow p-4 rounded-lg text-center">
+                      <p className="text-gray-600 mb-2">Total Rooms</p>
+                      <p className="text-2xl font-bold">{property.roomAvailability.total}</p>
+                    </div>
+                    <div className="bg-white shadow p-4 rounded-lg text-center">
+                      <p className="text-gray-600 mb-2">Available</p>
+                      <p className="text-2xl font-bold text-green-600">{property.roomAvailability.available}</p>
+                    </div>
+                    <div className="bg-white shadow p-4 rounded-lg text-center">
+                      <p className="text-gray-600 mb-2">Occupied</p>
+                      <p className="text-2xl font-bold text-red-500">{property.roomAvailability.occupied}</p>
+                    </div>
+                  </div>
+                  
+                  {!hasAvailableRooms && similarProperties.length > 0 && (
+                    <div className="mt-6">
+                      <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4 mr-2" />
+                        <AlertTitle>No rooms currently available</AlertTitle>
+                        <AlertDescription>
+                          This property is currently fully occupied. Check out similar properties below or contact the landlord for future availability.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
+                  
+                  <div className="mt-6">
+                    {hasAvailableRooms ? (
+                      <Link to={`/booking/${property.id}`}>
+                        <Button className="bg-unistay-blue hover:bg-unistay-blue/90">
+                          Book Available Room
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button disabled className="opacity-50 cursor-not-allowed">
+                        No Rooms Available
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Room availability information is not available for this property.</p>
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
 
         {/* Landlord Information and Contact */}
@@ -238,11 +347,17 @@ const PropertyDetails = () => {
               </div>
             </div>
             <div className="flex-grow">
-              <Link to={`/booking/${property.id}`}>
-                <Button className="bg-unistay-blue hover:bg-unistay-blue/90 w-full mb-3">
-                  Book Now
+              {hasAvailableRooms ? (
+                <Link to={`/booking/${property.id}`}>
+                  <Button className="bg-unistay-blue hover:bg-unistay-blue/90 w-full mb-3">
+                    Book Now
+                  </Button>
+                </Link>
+              ) : (
+                <Button disabled className="w-full mb-3 opacity-50 cursor-not-allowed">
+                  No Rooms Available
                 </Button>
-              </Link>
+              )}
               <PropertyContactButtons
                 phone={property.landlord.phone}
                 name={property.landlord.name}
@@ -254,17 +369,41 @@ const PropertyDetails = () => {
           </div>
         </div>
         
-        {/* Similar Properties - Placeholder for future implementation */}
+        {/* Similar Properties Section - Now shows actual similar properties with availability */}
         <div className="border-t pt-8">
           <h3 className="text-xl font-semibold mb-2">Similar Properties</h3>
-          <p className="text-gray-600 mb-4">More properties will be available in the full version</p>
-          <div className="flex justify-center">
-            <Link to="/listings">
-              <Button variant="outline" className="flex items-center gap-2">
-                View All Listings <ExternalLink size={16} />
-              </Button>
-            </Link>
-          </div>
+          
+          {!hasAvailableRooms && similarProperties.length > 0 ? (
+            <div>
+              <p className="text-gray-600 mb-4">Check these available alternatives near {property.university}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {similarProperties.map(prop => (
+                  <div key={prop.id} className="border rounded-lg overflow-hidden shadow-sm">
+                    <Link to={`/property/${prop.id}`}>
+                      <img src={prop.imageUrl} alt={prop.title} className="w-full h-36 object-cover" />
+                      <div className="p-4">
+                        <h4 className="font-medium">{prop.title}</h4>
+                        <div className="flex items-center justify-between mt-2">
+                          <Badge className="bg-green-500 flex items-center">
+                            <Check size={14} className="mr-1" /> {prop.roomAvailability?.available} Available
+                          </Badge>
+                          <span className="font-semibold">¢{prop.price.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <Link to="/listings">
+                <Button variant="outline" className="flex items-center gap-2">
+                  View All Listings <ExternalLink size={16} />
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

@@ -1,4 +1,3 @@
-
 export interface Property {
   id: string;
   title: string;
@@ -23,6 +22,11 @@ export interface Property {
   distanceFromUniversity: string;
   rating: number;
   reviews: number;
+  roomAvailability?: {
+    total: number;
+    available: number;
+    occupied: number;
+  };
 }
 
 export const properties: Property[] = [
@@ -49,7 +53,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.5 km",
     rating: 4.5,
-    reviews: 24
+    reviews: 24,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-002",
@@ -74,7 +83,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.2 km",
     rating: 4.8,
-    reviews: 56
+    reviews: 56,
+    roomAvailability: {
+      total: 30,
+      available: 8,
+      occupied: 22
+    }
   },
   {
     id: "prop-003",
@@ -99,7 +113,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.8 km",
     rating: 3.9,
-    reviews: 18
+    reviews: 18,
+    roomAvailability: {
+      total: 15,
+      available: 0,
+      occupied: 15
+    }
   },
   {
     id: "prop-004",
@@ -124,7 +143,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.5 km",
     rating: 4.9,
-    reviews: 42
+    reviews: 42,
+    roomAvailability: {
+      total: 25,
+      available: 10,
+      occupied: 15
+    }
   },
   {
     id: "prop-005",
@@ -149,7 +173,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.3 km",
     rating: 4.7,
-    reviews: 35
+    reviews: 35,
+    roomAvailability: {
+      total: 10,
+      available: 3,
+      occupied: 7
+    }
   },
   {
     id: "prop-006",
@@ -174,7 +203,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.6 km",
     rating: 4.0,
-    reviews: 29
+    reviews: 29,
+    roomAvailability: {
+      total: 15,
+      available: 5,
+      occupied: 10
+    }
   },
   {
     id: "prop-007",
@@ -199,7 +233,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.8 km",
     rating: 4.9,
-    reviews: 47
+    reviews: 47,
+    roomAvailability: {
+      total: 30,
+      available: 10,
+      occupied: 20
+    }
   },
   {
     id: "prop-008",
@@ -224,7 +263,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.9 km",
     rating: 4.7,
-    reviews: 38
+    reviews: 38,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-009",
@@ -249,7 +293,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.4 km",
     rating: 4.8,
-    reviews: 44
+    reviews: 44,
+    roomAvailability: {
+      total: 25,
+      available: 10,
+      occupied: 15
+    }
   },
   {
     id: "prop-010",
@@ -274,7 +323,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.1 km",
     rating: 4.6,
-    reviews: 52
+    reviews: 52,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-011",
@@ -299,7 +353,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.7 km",
     rating: 4.5,
-    reviews: 33
+    reviews: 33,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-012",
@@ -324,7 +383,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.5 km",
     rating: 4.9,
-    reviews: 29
+    reviews: 29,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-013",
@@ -349,7 +413,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.3 km",
     rating: 4.6,
-    reviews: 41
+    reviews: 41,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-014",
@@ -374,7 +443,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.0 km",
     rating: 4.7,
-    reviews: 37
+    reviews: 37,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-015",
@@ -399,7 +473,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.2 km",
     rating: 4.8,
-    reviews: 63
+    reviews: 63,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-016",
@@ -424,7 +503,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.9 km",
     rating: 4.5,
-    reviews: 31
+    reviews: 31,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-017",
@@ -449,7 +533,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.7 km",
     rating: 4.7,
-    reviews: 48
+    reviews: 48,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-018",
@@ -474,7 +563,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.5 km",
     rating: 4.8,
-    reviews: 39
+    reviews: 39,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-019",
@@ -499,7 +593,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.8 km",
     rating: 4.6,
-    reviews: 27
+    reviews: 27,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-020",
@@ -524,7 +623,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.4 km",
     rating: 4.7,
-    reviews: 56
+    reviews: 56,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-021",
@@ -549,7 +653,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.3 km",
     rating: 4.9,
-    reviews: 42
+    reviews: 42,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-022",
@@ -574,7 +683,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.9 km",
     rating: 4.8,
-    reviews: 34
+    reviews: 34,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-023",
@@ -599,7 +713,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.6 km",
     rating: 4.7,
-    reviews: 45
+    reviews: 45,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-024",
@@ -624,7 +743,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.7 km",
     rating: 4.6,
-    reviews: 38
+    reviews: 38,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-025",
@@ -649,7 +773,12 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "0.5 km",
     rating: 4.8,
-    reviews: 49
+    reviews: 49,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   },
   {
     id: "prop-026",
@@ -674,6 +803,11 @@ export const properties: Property[] = [
     },
     distanceFromUniversity: "1.0 km",
     rating: 4.7,
-    reviews: 32
+    reviews: 32,
+    roomAvailability: {
+      total: 20,
+      available: 5,
+      occupied: 15
+    }
   }
 ];
