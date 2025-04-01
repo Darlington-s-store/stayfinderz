@@ -16,13 +16,18 @@ export interface Property {
     name: string;
     phone: string;
     email: string;
+    verified?: boolean;
   };
   roomAvailability?: {
     total: number;
     available: number;
     occupied: number;
   };
-  features?: string[];
+  features?: {
+    bedrooms: number;
+    bathrooms: number;
+    area: number;
+  };
   images?: string[];
   reviews?: {
     id: string;
@@ -31,6 +36,8 @@ export interface Property {
     comment: string;
     date: string;
   }[];
+  rating?: number;
+  distanceFromUniversity?: string;
 }
 
 // Get all properties with filtering capabilities

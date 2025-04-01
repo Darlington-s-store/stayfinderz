@@ -1,4 +1,3 @@
-
 export const mockProperties = [
   {
     id: "1",
@@ -13,20 +12,19 @@ export const mockProperties = [
     landlord: {
       name: "Emmanuel Addo",
       phone: "+233501234567",
-      email: "emmanuel@example.com"
+      email: "emmanuel@example.com",
+      verified: true
     },
     roomAvailability: {
       total: 20,
       available: 5,
       occupied: 15
     },
-    features: [
-      "24/7 Security",
-      "Backup Power",
-      "Water Storage",
-      "Study Areas",
-      "Common Room"
-    ],
+    features: {
+      bedrooms: 1,
+      bathrooms: 1,
+      area: 15
+    },
     images: [
       "/assets/images/hostel1-room.jpg",
       "/assets/images/hostel1-bathroom.jpg",
@@ -40,7 +38,9 @@ export const mockProperties = [
         comment: "Great location and facilities. The WiFi is fast and reliable.",
         date: "2023-10-15"
       }
-    ]
+    ],
+    rating: 4.5,
+    distanceFromUniversity: "5 minutes"
   },
   {
     id: "2",
@@ -55,20 +55,21 @@ export const mockProperties = [
     landlord: {
       name: "Abena Owusu",
       phone: "+233507654321",
-      email: "abena@example.com"
+      email: "abena@example.com",
+      verified: false
     },
     roomAvailability: {
       total: 30,
       available: 0,
       occupied: 30
     },
-    features: [
-      "Study Rooms",
-      "Reading Area",
-      "Kitchenette",
-      "Water Supply",
-      "Security Personnel"
-    ]
+    features: {
+      bedrooms: 2,
+      bathrooms: 1,
+      area: 20
+    },
+    rating: 4.2,
+    distanceFromUniversity: "10 minutes"
   },
   {
     id: "3",

@@ -142,7 +142,9 @@ const PropertyDetails = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge className="bg-unistay-blue">{property.roomType}</Badge>
               <Badge variant="outline">Near {property.university}</Badge>
-              <Badge variant="outline">{property.distanceFromUniversity} from campus</Badge>
+              {property.distanceFromUniversity && (
+                <Badge variant="outline">{property.distanceFromUniversity} from campus</Badge>
+              )}
               {property.roomAvailability && (
                 <Badge variant={hasAvailableRooms ? "outline" : "destructive"} className="flex items-center">
                   <Bed size={14} className="mr-1" /> 
@@ -159,11 +161,13 @@ const PropertyDetails = () => {
               ¢{property.price.toLocaleString()}
               <span className="text-base font-normal text-gray-500">/semester</span>
             </div>
-            <div className="flex items-center justify-end">
-              <Star className="fill-yellow-400 text-yellow-400 mr-1" size={18} />
-              <span className="font-medium mr-1">{property.rating}</span>
-              <span className="text-gray-500">({property.reviews} reviews)</span>
-            </div>
+            {property.rating && property.reviews && (
+              <div className="flex items-center justify-end">
+                <Star className="fill-yellow-400 text-yellow-400 mr-1" size={18} />
+                <span className="font-medium mr-1">{property.rating}</span>
+                <span className="text-gray-500">({property.reviews.length} reviews)</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -192,32 +196,34 @@ const PropertyDetails = () => {
               <p className="text-gray-700">{property.description}</p>
             </div>
             
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Property information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center p-4 bg-slate-50 rounded-lg">
-                  <Building className="mr-3 text-unistay-blue" size={24} />
-                  <div>
-                    <div className="text-sm text-gray-600">Bedrooms</div>
-                    <div className="font-medium">{property.features.bedrooms}</div>
+            {property.features && (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Property information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center p-4 bg-slate-50 rounded-lg">
+                    <Building className="mr-3 text-unistay-blue" size={24} />
+                    <div>
+                      <div className="text-sm text-gray-600">Bedrooms</div>
+                      <div className="font-medium">{property.features.bedrooms}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center p-4 bg-slate-50 rounded-lg">
-                  <Bath className="mr-3 text-unistay-blue" size={24} />
-                  <div>
-                    <div className="text-sm text-gray-600">Bathrooms</div>
-                    <div className="font-medium">{property.features.bathrooms}</div>
+                  <div className="flex items-center p-4 bg-slate-50 rounded-lg">
+                    <Bath className="mr-3 text-unistay-blue" size={24} />
+                    <div>
+                      <div className="text-sm text-gray-600">Bathrooms</div>
+                      <div className="font-medium">{property.features.bathrooms}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center p-4 bg-slate-50 rounded-lg">
-                  <Ruler className="mr-3 text-unistay-blue" size={24} />
-                  <div>
-                    <div className="text-sm text-gray-600">Room Size</div>
-                    <div className="font-medium">{property.features.area} m²</div>
+                  <div className="flex items-center p-4 bg-slate-50 rounded-lg">
+                    <Ruler className="mr-3 text-unistay-blue" size={24} />
+                    <div>
+                      <div className="text-sm text-gray-600">Room Size</div>
+                      <div className="font-medium">{property.features.area} m²</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </TabsContent>
           
           <TabsContent value="features">
@@ -253,7 +259,10 @@ const PropertyDetails = () => {
           <TabsContent value="location">
             <h3 className="text-xl font-semibold mb-4">Location</h3>
             <p className="mb-4 text-gray-700">
-              This property is located at {property.location}, approximately {property.distanceFromUniversity} from {property.university}.
+              This property is located at {property.location}
+              {property.distanceFromUniversity && (
+                <>, approximately {property.distanceFromUniversity} from {property.university}</>
+              )}.
             </p>
             <div className="bg-slate-200 rounded-lg h-64 flex items-center justify-center">
               <p className="text-gray-500 flex items-center gap-2">
@@ -263,7 +272,7 @@ const PropertyDetails = () => {
             </div>
           </TabsContent>
           
-          {/* New Rooms Availability Tab */}
+          {/* Rooms Availability Tab */}
           <TabsContent value="rooms">
             <h3 className="text-xl font-semibold mb-4">Room Availability</h3>
             
@@ -326,14 +335,16 @@ const PropertyDetails = () => {
           <h3 className="text-xl font-semibold mb-4">Property managed by {property.landlord.name}</h3>
           <div className="flex items-start gap-8 flex-wrap">
             <div>
-              {property.landlord.verified ? (
-                <Badge className="mb-4 bg-green-600">
-                  <Shield className="mr-1" size={14} /> Verified Landlord
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="mb-4">
-                  Verification Pending
-                </Badge>
+              {property.landlord.verified !== undefined && (
+                property.landlord.verified ? (
+                  <Badge className="mb-4 bg-green-600">
+                    <Shield className="mr-1" size={14} /> Verified Landlord
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="mb-4">
+                    Verification Pending
+                  </Badge>
+                )
               )}
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -369,7 +380,7 @@ const PropertyDetails = () => {
           </div>
         </div>
         
-        {/* Similar Properties Section - Now shows actual similar properties with availability */}
+        {/* Similar Properties Section */}
         <div className="border-t pt-8">
           <h3 className="text-xl font-semibold mb-2">Similar Properties</h3>
           
