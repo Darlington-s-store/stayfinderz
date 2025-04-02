@@ -6,12 +6,13 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyPagination from "@/components/PropertyPagination";
 import { properties as allProperties } from "@/data/properties";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import PriceRangeFilter from "@/components/PriceRangeFilter";
+import AmenitiesFilter from "@/components/AmenitiesFilter";
+import { getPriceRange, getAllAmenities } from "@/services/propertyService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const Listings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,22 +25,18 @@ const Listings = () => {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("location") || "");
   const [university, setUniversity] = useState(searchParams.get("university") || "");
   const [roomType, setRoomType] = useState(searchParams.get("roomType") || "");
-  const [minPrice, setMinPrice] = useState(1000);
-  const [maxPrice, setMaxPrice] = useState(6000);
+  
+  // Get price range and amenities for filters
+  const { min: minPriceAvailable, max: maxPriceAvailable } = getPriceRange();
+  const [minPrice, setMinPrice] = useState(minPriceAvailable);
+  const [maxPrice, setMaxPrice] = useState(maxPriceAvailable);
+  const allAvailableAmenities = getAllAmenities();
   const [amenities, setAmenities] = useState<string[]>([]);
   
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, university, roomType, minPrice, maxPrice, amenities]);
-  
-  const toggleAmenity = (amenity: string) => {
-    if (amenities.includes(amenity)) {
-      setAmenities(amenities.filter(a => a !== amenity));
-    } else {
-      setAmenities([...amenities, amenity]);
-    }
-  };
   
   // Apply filters
   useEffect(() => {
@@ -95,8 +92,8 @@ const Listings = () => {
     setSearchTerm("");
     setUniversity("");
     setRoomType("");
-    setMinPrice(1000);
-    setMaxPrice(6000);
+    setMinPrice(minPriceAvailable);
+    setMaxPrice(maxPriceAvailable);
     setAmenities([]);
   };
 
@@ -108,11 +105,14 @@ const Listings = () => {
     "Ashesi University",
   ];
 
-  const availableAmenities = [
-    "WiFi", "Water", "Electricity", "Security", "Private Bathroom", 
-    "Shared Bathroom", "Private Kitchen", "Shared Kitchen", "Air Conditioning",
-    "Study Desk", "Study Lounge", "Laundry Facility"
-  ];
+  const handlePriceChange = (min: number, max: number) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
+
+  const handleAmenitiesChange = (selectedAmenities: string[]) => {
+    setAmenities(selectedAmenities);
+  };
   
   // Calculate pagination indexes
   const indexOfLastProperty = currentPage * itemsPerPage;
@@ -195,42 +195,20 @@ const Listings = () => {
               </div>
               
               <div>
-                <Label className="mb-2 block">Price Range (¢)</Label>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm">¢{minPrice}</span>
-                  <span className="text-sm">¢{maxPrice}</span>
-                </div>
-                <div className="px-1">
-                  <Slider
-                    defaultValue={[minPrice, maxPrice]}
-                    min={1000}
-                    max={6000}
-                    step={100}
-                    onValueChange={(values) => {
-                      setMinPrice(values[0]);
-                      setMaxPrice(values[1]);
-                    }}
-                  />
-                </div>
+                <PriceRangeFilter
+                  minPrice={minPriceAvailable}
+                  maxPrice={maxPriceAvailable}
+                  onChange={handlePriceChange}
+                />
               </div>
             </div>
             
             <div className="mt-6">
-              <Label className="mb-3 block">Amenities</Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {availableAmenities.map((amenity) => (
-                  <div key={amenity} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`amenity-${amenity}`}
-                      checked={amenities.includes(amenity)}
-                      onCheckedChange={() => toggleAmenity(amenity)}
-                    />
-                    <Label htmlFor={`amenity-${amenity}`} className="text-sm cursor-pointer">
-                      {amenity}
-                    </Label>
-                  </div>
-                ))}
-              </div>
+              <AmenitiesFilter
+                amenities={allAvailableAmenities}
+                selectedAmenities={amenities}
+                onChange={handleAmenitiesChange}
+              />
             </div>
           </div>
         )}
@@ -261,6 +239,7 @@ const Listings = () => {
                     amenities={property.amenities}
                     landlordName={property.landlord.name}
                     landlordPhone={property.landlord.phone}
+                    roomAvailability={property.roomAvailability}
                   />
                 ))}
               </div>

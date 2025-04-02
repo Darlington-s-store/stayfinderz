@@ -1,40 +1,28 @@
 
-import { useState, useEffect } from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Layout from "@/components/Layout";
 import PropertyCard from "@/components/PropertyCard";
-import { getFavoriteProperties, Property } from "@/services/propertyService";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { getFavoriteProperties } from '@/services/propertyService';
+import { Heart, ArrowRight } from 'lucide-react';
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState<Property[]>([]);
-  
-  useEffect(() => {
-    // Load favorites when component mounts
-    setFavorites(getFavoriteProperties());
-    
-    // Set up event listener for storage changes (in case favorites are updated in another tab)
-    const handleStorageChange = () => {
-      setFavorites(getFavoriteProperties());
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  const favoriteProperties = getFavoriteProperties();
+  const hasProperties = favoriteProperties.length > 0;
 
   return (
     <Layout>
       <div className="container py-8">
-        <h1 className="text-3xl font-bold mb-6">Saved Properties</h1>
+        <h1 className="text-3xl font-bold flex items-center mb-6">
+          <Heart className="mr-2 h-6 w-6 text-red-500" /> 
+          My Saved Properties
+        </h1>
         
-        {favorites.length > 0 ? (
+        {hasProperties ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favorites.map((property) => (
+              {favoriteProperties.map((property) => (
                 <PropertyCard
                   key={property.id}
                   id={property.id}
@@ -52,19 +40,25 @@ const Favorites = () => {
               ))}
             </div>
             
-            <div className="mt-8">
-              <Link to="/compare">
-                <Button className="bg-unistay-blue">Compare Saved Properties</Button>
+            <div className="mt-8 text-center">
+              <Link to="/listings">
+                <Button>
+                  <ArrowRight className="mr-2 h-4 w-4" /> Explore More Properties
+                </Button>
               </Link>
             </div>
           </>
         ) : (
-          <div className="text-center py-12">
-            <Heart className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">No Saved Properties</h2>
-            <p className="text-gray-600 mb-6">Your saved properties will appear here</p>
+          <div className="text-center py-16 bg-white rounded-lg border">
+            <Heart className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+            <h2 className="text-2xl font-semibold mb-4">No Saved Properties</h2>
+            <p className="text-gray-600 max-w-md mx-auto mb-6">
+              You haven't saved any properties yet. Browse listings and click the heart icon to add properties to your favorites.
+            </p>
             <Link to="/listings">
-              <Button className="bg-unistay-blue">Browse Properties</Button>
+              <Button>
+                <ArrowRight className="mr-2 h-4 w-4" /> Browse Listings
+              </Button>
             </Link>
           </div>
         )}

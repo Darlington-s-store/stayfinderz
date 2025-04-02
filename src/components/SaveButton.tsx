@@ -8,11 +8,15 @@ import { addToFavorites, removeFromFavorites, isPropertyInFavorites } from "@/se
 interface SaveButtonProps {
   propertyId: string;
   className?: string;
+  showText?: boolean;
+  size?: "sm" | "default" | "lg"; 
 }
 
 const SaveButton: React.FC<SaveButtonProps> = ({ 
   propertyId,
-  className = ""
+  className = "",
+  showText = false,
+  size = "sm"
 }) => {
   const [isSaved, setIsSaved] = useState(false);
   const { toast } = useToast();
@@ -39,20 +43,24 @@ const SaveButton: React.FC<SaveButtonProps> = ({
       toast({
         title: "Property saved",
         description: "Property has been added to your saved list",
+        variant: "default",
       });
     }
   };
 
   return (
     <Button
-      variant="secondary"
-      size="sm"
-      className={`bg-white bg-opacity-75 hover:bg-white ${className}`}
+      variant={isSaved ? "default" : "secondary"}
+      size={size}
+      className={`${isSaved ? 'bg-red-50 hover:bg-red-100 text-red-600' : 'bg-white bg-opacity-75 hover:bg-white'} ${className}`}
       onClick={handleToggleSave}
     >
       <Heart 
         className={`h-4 w-4 ${isSaved ? 'fill-current text-red-500' : 'text-gray-600'}`} 
       />
+      {showText && (
+        <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span>
+      )}
     </Button>
   );
 };
