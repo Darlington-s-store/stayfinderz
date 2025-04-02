@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { properties } from "@/data/properties";
-import { Property } from "@/services/propertyService"; // Fixed import path for Property type
+import { Property } from "@/services/propertyService"; 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +23,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import RecentlyViewed from "@/components/RecentlyViewed";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,6 +103,13 @@ const PropertyDetails = () => {
     return url.startsWith('/') ? url : `/${url}`;
   };
 
+  // Get all available images for the property
+  const allImages = [
+    property.imageUrl,
+    ...(property.images || []),
+    ...(property.onlineImages || [])
+  ].filter(Boolean);
+
   return (
     <Layout>
       <div className="container py-8">
@@ -110,20 +119,33 @@ const PropertyDetails = () => {
           </Link>
         </div>
 
-        {/* Property Images */}
-        <div className="mb-8">
-          {property.imageUrl ? (
-            <img
-              src={getImageUrl(property.imageUrl)}
-              alt={property.title}
-              className="w-full h-[400px] object-cover rounded-lg shadow-md"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                console.log("Image failed to load:", target.src);
-                target.src = "/placeholder.svg";
-                target.onerror = null; // Prevent infinite loop
-              }}
-            />
+        {/* Property Images Carousel */}
+        <div className="mb-8 relative">
+          {allImages.length > 0 ? (
+            <Carousel className="w-full">
+              <CarouselContent>
+                {allImages.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-1">
+                      <div className="overflow-hidden rounded-lg">
+                        <img
+                          src={getImageUrl(image)}
+                          alt={`${property.title} - Image ${index + 1}`}
+                          className="w-full h-[400px] object-cover rounded-lg shadow-md"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/placeholder.svg";
+                            target.onerror = null;
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
           ) : (
             <img
               src="/placeholder.svg"
@@ -450,6 +472,9 @@ const PropertyDetails = () => {
             </div>
           )}
         </div>
+        
+        {/* Recently Viewed Properties */}
+        <RecentlyViewed currentPropertyId={id} limit={3} />
       </div>
     </Layout>
   );

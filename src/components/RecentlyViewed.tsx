@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Clock, ArrowRight } from 'lucide-react';
 import { Property, getPropertyById, updatePropertyWithOnlineImages } from '@/services/propertyService';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface RecentlyViewedProps {
   currentPropertyId?: string;
@@ -122,7 +123,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-8 border-t pt-8">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-lg flex items-center">
           <Clock className="mr-2 h-5 w-5" /> 
@@ -135,32 +136,30 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {recentProperties.map((property) => (
-          <Link 
-            key={property.id} 
-            to={`/property/${property.id}`}
-            className="group relative block overflow-hidden rounded-lg border hover:border-blue-300 transition-colors"
-          >
-            <div className="aspect-video w-full overflow-hidden">
-              <img 
-                src={getImageUrl(property)} 
-                alt={property.title} 
-                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/placeholder.svg";
-                  target.onerror = null; // Prevent infinite loop
-                }}
-              />
-            </div>
-            <div className="p-3">
-              <h4 className="font-medium line-clamp-1">{property.title}</h4>
-              <p className="text-sm text-gray-500 line-clamp-1">{property.location}</p>
-              <div className="mt-2 flex items-center justify-between">
-                <Badge variant="outline">{property.roomType}</Badge>
-                <span className="font-bold">¢{property.price.toLocaleString()}</span>
+          <Card key={property.id} className="overflow-hidden group hover:border-blue-300 transition-colors">
+            <Link to={`/property/${property.id}`}>
+              <div className="aspect-video w-full overflow-hidden">
+                <img 
+                  src={getImageUrl(property)} 
+                  alt={property.title} 
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/placeholder.svg";
+                    target.onerror = null; // Prevent infinite loop
+                  }}
+                />
               </div>
-            </div>
-          </Link>
+              <CardContent className="p-3">
+                <h4 className="font-medium line-clamp-1">{property.title}</h4>
+                <p className="text-sm text-gray-500 line-clamp-1">{property.location}</p>
+                <div className="mt-2 flex items-center justify-between">
+                  <Badge variant="outline">{property.roomType}</Badge>
+                  <span className="font-bold">¢{property.price.toLocaleString()}</span>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
         ))}
       </div>
     </div>
