@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, ArrowRight } from 'lucide-react';
-import { Property, getPropertyById } from '@/services/propertyService';
+import { Property, getPropertyById, updatePropertyWithOnlineImages } from '@/services/propertyService';
 import { Badge } from '@/components/ui/badge';
 
 interface RecentlyViewedProps {
@@ -15,6 +15,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
   limit = 3
 }) => {
   const [recentProperties, setRecentProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get recently viewed properties from localStorage
@@ -45,20 +46,72 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
       ? recentIds.filter((id: string) => id !== currentPropertyId).slice(0, limit)
       : recentIds.slice(0, limit);
       
+    // Start loading
+    setLoading(true);
+    
     // Get property details for each ID
-    const properties = idsToShow
-      .map((id: string) => getPropertyById(id))
-      .filter((p): p is Property => p !== undefined);
-      
-    setRecentProperties(properties);
+    const fetchPropertiesWithImages = async () => {
+      try {
+        const propertiesPromises = idsToShow.map(async (id: string) => {
+          // Get the base property
+          const property = getPropertyById(id);
+          if (!property) return null;
+          
+          // Try to fetch online images if needed
+          if (!property.onlineImages || property.onlineImages.length === 0) {
+            await updatePropertyWithOnlineImages(id);
+          }
+          
+          return property;
+        });
+        
+        const properties = await Promise.all(propertiesPromises);
+        setRecentProperties(properties.filter(Boolean) as Property[]);
+      } catch (error) {
+        console.error('Error fetching properties with images:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPropertiesWithImages();
   }, [currentPropertyId, limit]);
+  
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-lg flex items-center">
+            <Clock className="mr-2 h-5 w-5" /> 
+            Recently Viewed
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {Array(3).fill(0).map((_, i) => (
+            <div key={i} className="animate-pulse rounded-lg border p-3 h-64">
+              <div className="bg-slate-200 w-full h-40 rounded-md mb-2"></div>
+              <div className="bg-slate-200 w-3/4 h-4 rounded-md mb-2"></div>
+              <div className="bg-slate-200 w-1/2 h-4 rounded-md"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
   
   if (recentProperties.length === 0) {
     return null; // Don't show if no recent properties
   }
 
   // Helper function to ensure image URLs are properly formatted
-  const getImageUrl = (url: string) => {
+  const getImageUrl = (property: Property) => {
+    // First check if the property has online images
+    if (property.onlineImages && property.onlineImages.length > 0) {
+      return property.onlineImages[0];
+    }
+    
+    const url = property.imageUrl;
+    
     // If the URL starts with http or https, return it as is
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
@@ -89,7 +142,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
           >
             <div className="aspect-video w-full overflow-hidden">
               <img 
-                src={getImageUrl(property.imageUrl)} 
+                src={getImageUrl(property)} 
                 alt={property.title} 
                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {

@@ -1,4 +1,3 @@
-
 import { properties } from '@/data/properties';
 
 // Types
@@ -38,6 +37,7 @@ export interface Property {
   }[];
   rating?: number;
   distanceFromUniversity?: string;
+  onlineImages?: string[];
 }
 
 // Get all properties with filtering capabilities
@@ -204,4 +204,96 @@ export const compareProperties = (propertyIds: string[]): Property[] => {
     }
     return property;
   });
+};
+
+// Online images for properties
+const UNSPLASH_API = 'https://source.unsplash.com/random/800x600?';
+
+// Fetch random online images for a property based on its type and title
+export const fetchOnlineImagesForProperty = async (property: Property, count = 3): Promise<string[]> => {
+  try {
+    // Create search terms based on property details
+    const searchTerms = [
+      property.roomType.toLowerCase().replace(' ', '-'),
+      'student-accommodation',
+      'hostel',
+      'room'
+    ];
+    
+    // Use property title words as additional search terms
+    const titleTerms = property.title
+      .toLowerCase()
+      .split(' ')
+      .filter(word => word.length > 3)
+      .slice(0, 2);
+    
+    const allTerms = [...searchTerms, ...titleTerms].join(',');
+    
+    // Generate promises for fetching images
+    const imagePromises = Array(count).fill(0).map(async (_, index) => {
+      // Add a random seed to prevent getting the same image
+      const randomSeed = Math.floor(Math.random() * 1000);
+      const url = `${UNSPLASH_API}${allTerms}&seed=${randomSeed + index}`;
+      
+      try {
+        // We're using fetch to get the final URL after redirects
+        const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+        return response.url;
+      } catch (error) {
+        console.error('Error fetching image:', error);
+        return null;
+      }
+    });
+    
+    // Wait for all promises to resolve
+    const images = await Promise.all(imagePromises);
+    
+    // Filter out any failed image fetches
+    return images.filter(Boolean) as string[];
+  } catch (error) {
+    console.error('Failed to fetch online images:', error);
+    return [];
+  }
+};
+
+// Update a property with online images
+export const updatePropertyWithOnlineImages = async (propertyId: string): Promise<Property | null> => {
+  const property = getPropertyById(propertyId);
+  
+  if (!property) return null;
+  
+  // Check if property already has online images
+  if (property.onlineImages && property.onlineImages.length > 0) {
+    return property;
+  }
+  
+  try {
+    const images = await fetchOnlineImagesForProperty(property);
+    
+    if (images.length > 0) {
+      // Update the property with fetched images
+      property.onlineImages = images;
+    }
+    
+    return property;
+  } catch (error) {
+    console.error('Error updating property with online images:', error);
+    return property;
+  }
+};
+
+// Fetch online images for multiple properties
+export const fetchOnlineImagesForProperties = async (limit = 5): Promise<void> => {
+  try {
+    const propertiesToUpdate = properties
+      .filter(p => !p.onlineImages || p.onlineImages.length === 0)
+      .slice(0, limit);
+    
+    const promises = propertiesToUpdate.map(property => updatePropertyWithOnlineImages(property.id));
+    
+    await Promise.all(promises);
+    console.log(`Updated ${propertiesToUpdate.length} properties with online images`);
+  } catch (error) {
+    console.error('Error fetching images for multiple properties:', error);
+  }
 };
