@@ -57,11 +57,22 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
     return null; // Don't show if no recent properties
   }
 
+  // Helper function to ensure image URLs are properly formatted
+  const getImageUrl = (url: string) => {
+    // If the URL starts with http or https, return it as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // For relative URLs, ensure they're properly formatted
+    return url.startsWith('/') ? url : `/${url}`;
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-lg flex items-center">
-          <Clock className="mr-2 h-5 w-5" />
+          <Clock className="mr-2 h-5 w-5" /> 
           Recently Viewed
         </h3>
         <Link to="/listings" className="text-sm text-blue-600 flex items-center hover:underline">
@@ -78,9 +89,14 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
           >
             <div className="aspect-video w-full overflow-hidden">
               <img 
-                src={property.imageUrl} 
+                src={getImageUrl(property.imageUrl)} 
                 alt={property.title} 
                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/placeholder.svg";
+                  target.onerror = null; // Prevent infinite loop
+                }}
               />
             </div>
             <div className="p-3">

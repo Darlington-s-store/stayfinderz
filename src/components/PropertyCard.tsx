@@ -44,15 +44,32 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   
   // Calculate if rooms are available
   const hasAvailableRooms = roomAvailability && roomAvailability.available > 0;
+
+  // Helper function to ensure image URLs are properly formatted
+  const getImageUrl = (url: string) => {
+    // If the URL starts with http or https, return it as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // For relative URLs, ensure they're properly formatted
+    // If the URL starts with a slash, use it as is, otherwise add a leading slash
+    return url.startsWith('/') ? url : `/${url}`;
+  };
   
   return (
     <Card className="overflow-hidden border property-card-shadow">
       <Link to={`/property/${id}`}>
         <div className="aspect-video overflow-hidden relative">
           <img 
-            src={imageUrl} 
+            src={getImageUrl(imageUrl)} 
             alt={title} 
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.svg";
+              target.onerror = null; // Prevent infinite loop
+            }}
           />
           <SaveButton 
             propertyId={id}

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -90,6 +89,18 @@ const PropertyDetails = () => {
     );
   }
 
+  // Helper function to ensure image URLs are properly formatted
+  const getImageUrl = (url: string) => {
+    // If the URL starts with http or https, return it as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // For relative URLs, ensure they're properly formatted
+    // If the URL starts with a slash, use it as is, otherwise add a leading slash
+    return url.startsWith('/') ? url : `/${url}`;
+  };
+
   return (
     <Layout>
       <div className="container py-8">
@@ -101,11 +112,25 @@ const PropertyDetails = () => {
 
         {/* Property Images */}
         <div className="mb-8">
-          <img
-            src={property.imageUrl}
-            alt={property.title}
-            className="w-full h-[400px] object-cover rounded-lg shadow-md"
-          />
+          {property.imageUrl ? (
+            <img
+              src={getImageUrl(property.imageUrl)}
+              alt={property.title}
+              className="w-full h-[400px] object-cover rounded-lg shadow-md"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                console.log("Image failed to load:", target.src);
+                target.src = "/placeholder.svg";
+                target.onerror = null; // Prevent infinite loop
+              }}
+            />
+          ) : (
+            <img
+              src="/placeholder.svg"
+              alt={property.title}
+              className="w-full h-[400px] object-cover rounded-lg shadow-md"
+            />
+          )}
         </div>
 
         {/* Room Availability Alert */}
@@ -391,7 +416,16 @@ const PropertyDetails = () => {
                 {similarProperties.map(prop => (
                   <div key={prop.id} className="border rounded-lg overflow-hidden shadow-sm">
                     <Link to={`/property/${prop.id}`}>
-                      <img src={prop.imageUrl} alt={prop.title} className="w-full h-36 object-cover" />
+                      <img 
+                        src={getImageUrl(prop.imageUrl)} 
+                        alt={prop.title} 
+                        className="w-full h-36 object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                          target.onerror = null;
+                        }} 
+                      />
                       <div className="p-4">
                         <h4 className="font-medium">{prop.title}</h4>
                         <div className="flex items-center justify-between mt-2">
