@@ -13,28 +13,59 @@ import {
   Shield, 
   Star, 
   Phone, 
-  Clock
+  Clock,
+  ChevronRight
 } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
   const featuredProperties = properties.slice(0, 3);
+  const heroImages = [
+    "/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png",
+    "/lovable-uploads/68180f9b-1fa2-4228-9376-7622587d14d8.png",
+    "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png",
+    "/lovable-uploads/1ff9b2fc-6c03-4898-85a4-35fc52490fdb.png"
+  ];
   
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="hero-gradient text-white py-20 md:py-32">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
-              Find Your Perfect Student Accommodation
-            </h1>
-            <p className="text-xl mb-8 opacity-90 animate-slide-in">
-              Discover safe, affordable, and comfortable hostels and rental houses near your university.
-            </p>
-            <div className="animate-slide-in" style={{ animationDelay: "0.2s" }}>
-              <SearchBar />
-            </div>
-          </div>
+      {/* Hero Section with Image Carousel */}
+      <section className="relative text-white">
+        {/* Hero Image Carousel */}
+        <div className="relative h-[600px] overflow-hidden">
+          <Carousel className="w-full h-full">
+            <CarouselContent className="h-full">
+              {heroImages.map((image, index) => (
+                <CarouselItem key={index} className="h-full">
+                  <div 
+                    className="w-full h-full bg-cover bg-center" 
+                    style={{ 
+                      backgroundImage: `url(${image})`,
+                      backgroundPosition: 'center'
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center">
+                      <div className="container mx-auto px-4">
+                        <div className="max-w-3xl mx-auto text-center">
+                          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+                            Find Your Perfect Student Accommodation
+                          </h1>
+                          <p className="text-xl mb-8 opacity-90 animate-slide-in">
+                            Discover safe, affordable, and comfortable hostels and rental houses near your university.
+                          </p>
+                          <div className="animate-slide-in" style={{ animationDelay: "0.2s" }}>
+                            <SearchBar />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4 lg:left-8 text-white border-white hover:bg-white hover:text-black" />
+            <CarouselNext className="right-4 lg:right-8 text-white border-white hover:bg-white hover:text-black" />
+          </Carousel>
         </div>
       </section>
       
@@ -86,19 +117,62 @@ const Index = () => {
                 amenities={property.amenities}
                 landlordName={property.landlord.name}
                 landlordPhone={property.landlord.phone}
+                roomAvailability={property.roomAvailability}
               />
             ))}
           </div>
         </div>
       </section>
       
-      {/* Why Choose Us */}
+      {/* Premium Listings Section - New Section with Modern Image */}
       <section className="py-16 bg-white">
+        <div className="container">
+          <h2 className="text-3xl font-bold mb-8 text-center">Premium Student Accommodations</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src="/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png" 
+                alt="Premium Living Space" 
+                className="w-full h-96 object-cover"
+              />
+            </div>
+            
+            <div className="flex flex-col justify-center">
+              <h3 className="text-2xl font-bold mb-4">Luxury Student Living</h3>
+              <p className="text-gray-700 mb-6">
+                Experience the best in student accommodation with our premium listings. 
+                Modern interiors, top-notch amenities, and prime locations near your university.
+                Our premium properties feature comfortable living spaces, fully equipped kitchens,
+                and stylish bedrooms designed specifically for student needs.
+              </p>
+              
+              <ul className="space-y-3 mb-8">
+                {['Modern furniture and design', 'High-speed internet', 'Security systems', 'Quality appliances'].map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <ChevronRight className="h-5 w-5 text-unistay-blue mr-2" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              
+              <Link to="/listings">
+                <Button className="bg-unistay-blue hover:bg-unistay-blue/90 w-full sm:w-auto">
+                  Browse Premium Listings
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Why Choose Us */}
+      <section className="py-16 bg-slate-50">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Why Choose UniStay</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6 bg-slate-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-unistay-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Building className="text-unistay-blue" size={24} />
               </div>
@@ -106,7 +180,7 @@ const Index = () => {
               <p className="text-gray-600">Verified properties that meet our quality and safety standards.</p>
             </div>
             
-            <div className="text-center p-6 bg-slate-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-unistay-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="text-unistay-blue" size={24} />
               </div>
@@ -114,7 +188,7 @@ const Index = () => {
               <p className="text-gray-600">Properties close to your university for easy commuting.</p>
             </div>
             
-            <div className="text-center p-6 bg-slate-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-unistay-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="text-unistay-blue" size={24} />
               </div>
@@ -122,7 +196,7 @@ const Index = () => {
               <p className="text-gray-600">All landlords are verified, with reviews from previous students.</p>
             </div>
             
-            <div className="text-center p-6 bg-slate-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-unistay-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="text-unistay-blue" size={24} />
               </div>
@@ -141,8 +215,108 @@ const Index = () => {
         </div>
       </section>
       
-      {/* How It Works */}
+      {/* Bedroom Showcase - New Section */}
+      <section className="py-16 bg-white">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-3xl font-bold mb-6">Comfortable Bedrooms</h2>
+              <p className="text-gray-700 mb-6">
+                Our properties feature well-designed bedrooms with comfortable furnishings to ensure you get proper rest after a long day of studies. 
+                Quality mattresses, ample storage, and good lighting create the perfect environment for rest and study.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <h4 className="font-semibold mb-1">Quality Beds</h4>
+                  <p className="text-sm text-gray-600">Comfortable mattresses for restful sleep</p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <h4 className="font-semibold mb-1">Study Areas</h4>
+                  <p className="text-sm text-gray-600">Dedicated spaces for focused learning</p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <h4 className="font-semibold mb-1">Storage Solutions</h4>
+                  <p className="text-sm text-gray-600">Ample space for your belongings</p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <h4 className="font-semibold mb-1">Natural Light</h4>
+                  <p className="text-sm text-gray-600">Well-lit rooms for better mood</p>
+                </div>
+              </div>
+              
+              <Link to="/listings">
+                <Button className="bg-unistay-blue hover:bg-unistay-blue/90">
+                  Find Your Room
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="order-1 lg:order-2">
+              <div className="rounded-xl overflow-hidden shadow-lg">
+                <img 
+                  src="/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png" 
+                  alt="Bedroom" 
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Kitchen Section - New Section */}
       <section className="py-16 bg-slate-50">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <div className="rounded-xl overflow-hidden shadow-lg">
+                <img 
+                  src="/lovable-uploads/1ff9b2fc-6c03-4898-85a4-35fc52490fdb.png" 
+                  alt="Kitchen" 
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <h2 className="text-3xl font-bold mb-6">Modern Kitchen Facilities</h2>
+              <p className="text-gray-700 mb-6">
+                Cook your own meals in our well-equipped kitchens. Our properties feature modern appliances, 
+                ample counter space, and storage areas to make meal preparation easy and convenient for busy students.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <h4 className="font-semibold mb-1">Quality Appliances</h4>
+                  <p className="text-sm text-gray-600">Modern ovens and stovetops</p>
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <h4 className="font-semibold mb-1">Storage Space</h4>
+                  <p className="text-sm text-gray-600">Cabinets for all your essentials</p>
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <h4 className="font-semibold mb-1">Clean Design</h4>
+                  <p className="text-sm text-gray-600">Sleek and easy to maintain</p>
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <h4 className="font-semibold mb-1">Shared Options</h4>
+                  <p className="text-sm text-gray-600">Communal kitchens in many properties</p>
+                </div>
+              </div>
+              
+              <Link to="/listings">
+                <Button className="bg-unistay-blue hover:bg-unistay-blue/90">
+                  Explore Properties
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* How It Works */}
+      <section className="py-16 bg-white">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">How UniStay Works</h2>
           
@@ -175,12 +349,12 @@ const Index = () => {
       </section>
       
       {/* Testimonials Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-slate-50">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">What Our Students Say</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-slate-50 p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex items-center mb-4">
                 <div className="mr-4 h-12 w-12 rounded-full bg-unistay-blue/20 flex items-center justify-center">
                   <span className="font-semibold text-unistay-blue">KB</span>
@@ -200,7 +374,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-slate-50 p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex items-center mb-4">
                 <div className="mr-4 h-12 w-12 rounded-full bg-unistay-blue/20 flex items-center justify-center">
                   <span className="font-semibold text-unistay-blue">AD</span>
@@ -221,7 +395,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-slate-50 p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex items-center mb-4">
                 <div className="mr-4 h-12 w-12 rounded-full bg-unistay-blue/20 flex items-center justify-center">
                   <span className="font-semibold text-unistay-blue">JM</span>
@@ -275,7 +449,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Contact Support Section - Added at the Bottom */}
+      {/* Contact Support Section */}
       <section className="py-12 bg-slate-100">
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">

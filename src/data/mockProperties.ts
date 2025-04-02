@@ -6,7 +6,7 @@ export const mockProperties = [
     location: "East Legon, Accra",
     university: "University of Ghana",
     price: 5000,
-    imageUrl: "/assets/images/hostel1.jpg",
+    imageUrl: "/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png",
     roomType: "Single Room",
     amenities: ["WiFi", "Study Area", "Security", "Cleaning Service", "Laundry"],
     landlord: {
@@ -26,9 +26,14 @@ export const mockProperties = [
       area: 15
     },
     images: [
-      "/assets/images/hostel1-room.jpg",
-      "/assets/images/hostel1-bathroom.jpg",
-      "/assets/images/hostel1-common.jpg"
+      "/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png",
+      "/lovable-uploads/68180f9b-1fa2-4228-9376-7622587d14d8.png",
+      "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png"
+    ],
+    onlineImages: [
+      "/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png",
+      "/lovable-uploads/68180f9b-1fa2-4228-9376-7622587d14d8.png",
+      "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png"
     ],
     reviews: [
       {
@@ -49,7 +54,7 @@ export const mockProperties = [
     location: "Ayeduase, Kumasi",
     university: "Kwame Nkrumah University of Science and Technology",
     price: 4500,
-    imageUrl: "/assets/images/hostel2.jpg",
+    imageUrl: "/lovable-uploads/68180f9b-1fa2-4228-9376-7622587d14d8.png",
     roomType: "Shared Room",
     amenities: ["WiFi", "Security", "Backup Generator", "Study Room", "Kitchen"],
     landlord: {
@@ -68,6 +73,10 @@ export const mockProperties = [
       bathrooms: 1,
       area: 20
     },
+    onlineImages: [
+      "/lovable-uploads/68180f9b-1fa2-4228-9376-7622587d14d8.png",
+      "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png"
+    ],
     rating: 4.2,
     distanceFromUniversity: "10 minutes"
   },
@@ -78,7 +87,7 @@ export const mockProperties = [
     location: "Cape Coast",
     university: "University of Cape Coast",
     price: 6500,
-    imageUrl: "/assets/images/hostel3.jpg",
+    imageUrl: "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png",
     roomType: "Self-contained",
     amenities: ["Private Bathroom", "Kitchenette", "WiFi", "Security", "Backup Generator", "Study Area"],
     landlord: {
@@ -90,7 +99,11 @@ export const mockProperties = [
       total: 15,
       available: 2,
       occupied: 13
-    }
+    },
+    onlineImages: [
+      "/lovable-uploads/8d1c196c-2605-4dda-9207-3c3318a4ac24.png",
+      "/lovable-uploads/1ff9b2fc-6c03-4898-85a4-35fc52490fdb.png"
+    ]
   },
   {
     id: "4",
@@ -99,7 +112,7 @@ export const mockProperties = [
     location: "Achimota, Accra",
     university: "Ghana Institute of Management and Public Administration",
     price: 5500,
-    imageUrl: "/assets/images/hostel4.jpg",
+    imageUrl: "/lovable-uploads/1ff9b2fc-6c03-4898-85a4-35fc52490fdb.png",
     roomType: "Single Room",
     amenities: ["WiFi", "Security", "Cleaning Service", "Laundry", "Common Room"],
     landlord: {
@@ -111,7 +124,11 @@ export const mockProperties = [
       total: 25,
       available: 8,
       occupied: 17
-    }
+    },
+    onlineImages: [
+      "/lovable-uploads/1ff9b2fc-6c03-4898-85a4-35fc52490fdb.png",
+      "/lovable-uploads/411d18bd-6e90-4667-b42e-5058e434954d.png"
+    ]
   },
   {
     id: "5",
@@ -132,7 +149,8 @@ export const mockProperties = [
       total: 18,
       available: 0,
       occupied: 18
-    }
+    },
+    onlineImages: []
   },
   {
     id: "6",

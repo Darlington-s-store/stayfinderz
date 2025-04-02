@@ -7,6 +7,13 @@ export const properties = mockProperties;
 // Export default for convenience
 export default mockProperties;
 
+// Initialize online images for properties that don't already have them
+properties.forEach(property => {
+  if (!property.onlineImages) {
+    property.onlineImages = [];
+  }
+});
+
 // Import at the end to avoid circular dependency
 import { fetchOnlineImagesForProperties } from '@/services/propertyService';
 
